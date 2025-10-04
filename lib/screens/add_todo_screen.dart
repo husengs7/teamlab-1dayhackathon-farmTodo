@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../models/todo.dart';
 import '../services/todo_service.dart';
+import '../widgets/add_screen_background_widget.dart';
+import '../widgets/add_screen_middle_layer_widget.dart';
 
 class AddTodoScreen extends StatefulWidget {
   const AddTodoScreen({super.key, required this.todoService});
@@ -45,109 +47,134 @@ class AddTodoScreenState extends State<AddTodoScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('🌱 新しいタスクを追加 🌱'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          // 入力フォームの枠組み
-          key: _formKey,
-          child: Column(
-            children: [
-              // タイトル入力フィールド
-              TextFormField(
-                controller: _titleController,
-                decoration: const InputDecoration(
-                  labelText: '🌿 タスクのタイトル',
-                  hintText: '例：レポートを書く、買い物に行く',
-                  border: OutlineInputBorder(),
-                ),
-                validator: (value) {
-                  // 入力チェック
-                  if (value == null || value.isEmpty) {
-                    return 'タスクのタイトルを入力してください';
-                  }
-                  return null;
-                },
-              ),
-
-              const SizedBox(height: 16), // 余白
-
-              // 詳細入力フィールド
-              TextFormField(
-                controller: _detailController,
-                decoration: const InputDecoration(
-                  labelText: '📝 タスクの詳細',
-                  hintText: '例：2000字のレポート、スーパーで食材購入',
-                  border: OutlineInputBorder(),
-                ),
-                maxLines: 3, // 複数行入力可能
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'タスクの詳細を入力してください';
-                  }
-                  return null;
-                },
-              ),
-
-              const SizedBox(height: 16),
-
-              // 📅 期日入力フィールド（DatePicker）
-              TextFormField(
-                controller: _dateController,
-                readOnly: true, // キーボードを表示しない
-                decoration: const InputDecoration(
-                  labelText: '📅 期日',
-                  hintText: '年/月/日',
-                  border: OutlineInputBorder(),
-                ),
-                onTap: () async {
-                  // 日付選択ダイアログ
-                  DateTime? picked = await showDatePicker(
-                    context: context,
-                    initialDate: DateTime.now(),
-                    firstDate: DateTime.now(),
-                    lastDate: DateTime(2100),
-                  );
-                  if (picked != null) {
-                    setState(() {
-                      _selectedDate = picked;
-                      _dateController.text =
-                          '${picked.year}/${picked.month}/${picked.day}';
-                    });
-                  }
-                },
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return '期日を選択してください';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 24),
-
-              // 作成ボタン
-              ElevatedButton(
-                onPressed: _isFormValid ? _saveTodo : null,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: _isFormValid
-                      ? const Color(0xFF66BB6A)
-                      : Colors.grey.shade400,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                ), // 入力完了で活性化
-                child: Text(
-                  '🌱 タスクを植える',
-                  // テキストの色を変更
-                  style: TextStyle(
-                    color: _isFormValid ? Colors.white : Colors.grey,
-                    fontSize: 18,
+    return AddScreenBackgroundWidget(
+      child: Scaffold(
+        backgroundColor: Colors.transparent, // 背景を透明に
+        appBar: AppBar(
+          title: Image.asset(
+            'assets/images/add_logo.png', // 追加画面用ロゴ画像のパス
+            height: 40, // ロゴの高さ
+            fit: BoxFit.contain,
+          ),
+          backgroundColor: Colors.transparent, // AppBarも透明に
+          elevation: 0, // 影を削除
+          centerTitle: true, // ロゴを中央に配置
+        ),
+        body: AddScreenMiddleLayerWidget(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Form(
+              // 入力フォームの枠組み
+              key: _formKey,
+              child: Column(
+                children: [
+                  // タイトル入力フィールド
+                  TextFormField(
+                    controller: _titleController,
+                    decoration: InputDecoration(
+                      labelText: '🌿 タスクのタイトル',
+                      hintText: '例：レポートを書く、買い物に行く',
+                      border: const OutlineInputBorder(),
+                      fillColor: Colors.white.withOpacity(0.8), // 白の透明背景
+                      filled: true, // 背景を有効に
+                    ),
+                    validator: (value) {
+                      // 入力チェック
+                      if (value == null || value.isEmpty) {
+                        return 'タスクのタイトルを入力してください';
+                      }
+                      return null;
+                    },
                   ),
-                ),
+
+                  const SizedBox(height: 16), // 余白
+
+                  // 詳細入力フィールド
+                  TextFormField(
+                    controller: _detailController,
+                    decoration: InputDecoration(
+                      labelText: '📝 タスクの詳細',
+                      hintText: '例：2000字のレポート、スーパーで食材購入',
+                      border: const OutlineInputBorder(),
+                      fillColor: Colors.white.withOpacity(0.8), // 白の透明背景
+                      filled: true, // 背景を有効に
+                    ),
+                    maxLines: 3, // 複数行入力可能
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'タスクの詳細を入力してください';
+                      }
+                      return null;
+                    },
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // 📅 期日入力フィールド（DatePicker）
+                  TextFormField(
+                    controller: _dateController,
+                    readOnly: true, // キーボードを表示しない
+                    decoration: InputDecoration(
+                      labelText: '📅 期日',
+                      hintText: '年/月/日',
+                      border: const OutlineInputBorder(),
+                      fillColor: Colors.white.withOpacity(0.8), // 白の透明背景
+                      filled: true, // 背景を有効に
+                    ),
+                    onTap: () async {
+                      // 日付選択ダイアログ
+                      DateTime? picked = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime.now(),
+                        lastDate: DateTime(2100),
+                      );
+                      if (picked != null) {
+                        setState(() {
+                          _selectedDate = picked;
+                          _dateController.text =
+                              '${picked.year}/${picked.month}/${picked.day}';
+                        });
+                      }
+                    },
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return '期日を選択してください';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 24),
+
+                  // 作成ボタン
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.9), // 白の透明背景
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: ElevatedButton(
+                      onPressed: _isFormValid ? _saveTodo : null,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: _isFormValid
+                            ? const Color(0xFF66BB6A)
+                            : Colors.grey.shade400,
+                        padding:
+                            const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                        elevation: 0, // 影を削除して透明背景を活かす
+                      ), // 入力完了で活性化
+                    child: Text(
+                      '🌱 タスクを植える',
+                      // テキストの色を変更
+                      style: TextStyle(
+                        color: _isFormValid ? Colors.white : Colors.grey,
+                        fontSize: 18,
+                      ),
+                    ),
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),

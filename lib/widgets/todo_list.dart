@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/todo.dart'; // 作成したTodoクラス
 import '../services/todo_service.dart'; // データ保存サービス
-import '../widgets/todo_card.dart'; // 作成したTodoCardウィジェット
+import '../widgets/task_slot_card.dart'; // タスクスロットカード
 
 class TodoList extends StatefulWidget {
   const TodoList({super.key, required this.todoService});
@@ -54,28 +54,27 @@ class TodoListState extends State<TodoList> {
     await widget.todoService.saveTodos(_todos);
   }
 
-  // チェック or 削除ボタンから呼ばれる
-  // Future<void> _deleteTodo(Todo todo) async {
-  //   setState(() => _todos.removeWhere((t) => t.id == todo.id));
-  //   await widget.todoService.saveTodos(_todos);
-  // }
-
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
 
-    return ListView.builder(
-      itemCount: _todos.length,
+    return GridView.builder(
+      padding: const EdgeInsets.all(32.0),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2, // 横に2つ
+        crossAxisSpacing: 0.5, // 横の間隔を最小に
+        mainAxisSpacing: 0.5, // 縦の間隔を最小に
+        childAspectRatio: 1.0, // 正方形
+      ),
+      itemCount: 4, // 固定で4スロット
       itemBuilder: (context, index) {
-        final todo = _todos[index];
-        return Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: TodoCard(
-            todo: todo,
-            onToggle: () => _toggleTodo(todo), // チェック → 完了 → 削除
-          ),
+        final todo = index < _todos.length ? _todos[index] : null;
+        return TaskSlotCard(
+          todo: todo,
+          slotIndex: index,
+          onToggle: todo != null ? () => _toggleTodo(todo) : null,
         );
       },
     );  
